@@ -1,11 +1,10 @@
 package com.demo.quartz;
 
 import com.demo.quartz.jobs.HelloJob;
-import org.quartz.JobDetail;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
+import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
+
+import java.util.Date;
 
 import static org.quartz.JobBuilder.newJob;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
@@ -41,6 +40,14 @@ public class QuartzTest {
 
             // Tell quartz to schedule the job using our trigger
             scheduler.scheduleJob(job, trigger);
+
+
+            Date now = new Date();
+            SimpleTrigger simpleTrigger = (SimpleTrigger) newTrigger()
+                    .withIdentity("trigger1", "group1")
+                    .startAt(now) // some Date
+                    .forJob("job1", "group1") // identify job with name, group strings
+                    .build();
 
 
 
