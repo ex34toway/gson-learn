@@ -1,7 +1,13 @@
 <xls>
-    <area ref="Template!B9:N11">
-        <each items="interCarVoList" var="interCarVo" ref="Template!C10:N10">
-            <area ref="Template!C10:N10">
+    <area ref="car!B9:N11">
+        <each items="interCarVoList" var="interCarVo" ref="car!C10:N10">
+            <area ref="car!C10:N10">
+            </area>
+        </each>
+    </area>
+    <area ref="car2!B14:N16">
+        <each items="interCarVoList" var="interCarVo" ref="car2!C15:N15">
+            <area ref="car2!C15:N15">
             </area>
         </each>
     </area>

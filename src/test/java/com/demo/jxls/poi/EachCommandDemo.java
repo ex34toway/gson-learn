@@ -4,28 +4,31 @@ import autovalue.shaded.com.google.common.common.collect.Lists;
 import com.demo.guava.range.Person;
 import com.demo.model.Department;
 import com.demo.model.Employee;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.jxls.area.Area;
 import org.jxls.area.XlsArea;
 import org.jxls.builder.AreaBuilder;
 import org.jxls.builder.xml.XmlAreaBuilder;
-import org.jxls.command.Command;
-import org.jxls.command.EachCommand;
-import org.jxls.command.IfCommand;
+import org.jxls.command.*;
 import org.jxls.common.AreaRef;
+import org.jxls.common.CellData;
 import org.jxls.common.CellRef;
 import org.jxls.common.Context;
+import org.jxls.common.cellshift.AdjacentCellShiftStrategy;
+import org.jxls.common.cellshift.InnerCellShiftStrategy;
 import org.jxls.demo.*;
 import org.jxls.transform.Transformer;
+import org.jxls.transform.poi.PoiTransformer;
 import org.jxls.util.JxlsHelper;
 import org.jxls.util.TransformerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.math.BigDecimal;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,22 +41,28 @@ public class EachCommandDemo {
     private static String xmlConfig = "car_3.xml";
     private static String output = "target/car_output.xls";
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InvalidFormatException {
         logger.info("Running Each/If Command XML Builder demo");
         execute();
     }
 
-    public static void execute() throws IOException {
+    public static void execute() throws IOException, InvalidFormatException {
         List<Department> departments = createDepartments();
+        URL url = EachCommandDemo.class.getResource("");
         logger.info("Opening input stream");
         InputStream is = EachCommandDemo.class.getResourceAsStream(template);
+        Workbook wb = WorkbookFactory.create(is);
         OutputStream os = new FileOutputStream(output);
-        Transformer transformer = TransformerFactory.createTransformer(is, os);
+        //Transformer transformer = TransformerFactory.createTransformer(is, os);
+        PoiTransformer transformer = PoiTransformer.createTransformer(wb);
+        transformer.setOutputStream(os);
+        //transformer.set
         System.out.println("Creating areas");
         InputStream configInputStream = EachCommandDemo.class.getResourceAsStream(xmlConfig);
         AreaBuilder areaBuilder = new XmlAreaBuilder(configInputStream, transformer);
         List<Area> xlsAreaList = areaBuilder.build();
         Area xlsArea = xlsAreaList.get(0);
+        Area xlsArea2 = xlsAreaList.get(1);
         Context context = new Context();
         List<ExportLopPlanQuoteCarVo> interCarVoList = Lists.newLinkedList();
         ExportLopPlanQuoteCarVo vo =  new ExportLopPlanQuoteCarVo();
@@ -69,12 +78,53 @@ public class EachCommandDemo {
         context.putVar("interCarVoList", interCarVoList);
         context.putVar("updateCellMergeCellUpdater",new UpdateCellMergeCellUpdater());
         logger.info("Applying first area at cell " + new CellRef("40人!B2"));
-        xlsArea.applyAt(new CellRef("40人!B2"), context);
+        CellRef outExcel = new CellRef("40人!B2");
+        CellRef mergeCell = null;
+        Sheet sheet = null;
+        Row row = null;
+        Cell cell = null;
+        int curRow = outExcel.getRow();
+        int curCol = outExcel.getCol();
+        int dataSize = interCarVoList.size();
+        if(dataSize > 1){//模板默认占一行
+            curRow += (dataSize+2);//统计占一行
+            //curCol 不变
+        }else{
+            curRow += 2;
+        }
+        xlsArea.setCellShiftStrategy(new InnerCellShiftStrategy());
+        xlsArea.applyAt(outExcel, context);
         xlsArea.processFormulas();
+
+        //继续往下写
+        //改变原有单元格范围
+        if(dataSize > 1){//插入了数据
+            sheet = wb.getSheet("car");
+            mergeCell = outExcel.setRow(curRow + 1);//就是开始Cell向下一行
+            sheet.addMergedRegion(new CellRangeAddress(mergeCell.getRow(),mergeCell.getRow()+dataSize+2,mergeCell.getCol(),mergeCell.getCol()));
+            //
+            CellData cellData = new CellData(mergeCell, CellData.CellType.STRING,"国内团队用车（人民币）");
+
+            xlsArea.addAreaListener(new MergeHeaderColAreaListener(new CellRangeAddress(1,1,1,1)));
+            outExcel = outExcel.setRow(curRow);
+        }else{
+            //刚好把模板内容给填充
+        }
+        xlsArea2.setCellShiftStrategy(new InnerCellShiftStrategy());
+        xlsArea2.applyAt(outExcel, context);
+        xlsArea2.processFormulas();
         logger.info("Complete");
-        transformer.deleteSheet("Template");//删除模板表
+        transformer.deleteSheet("car");//删除模板表
+        transformer.deleteSheet("car2");//删除模板表
         transformer.write();
         logger.info("written to file");
+    }
+
+    public static void addMerge()
+    {
+        Sheet sheet = null;
+        CellRangeAddress region = new CellRangeAddress(1,1,1,1);
+        sheet.addMergedRegion(region);
     }
 
     public static List<Department> createDepartments() {
