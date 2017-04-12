@@ -98,6 +98,16 @@
           <artifactId>poi</artifactId>
           <version>3.15</version>
       </dependency>
+      <dependency>
+          <groupId>net.sf.jxls</groupId>
+          <artifactId>jxls-core</artifactId>
+          <version>1.0.6</version>
+      </dependency>
+      <dependency>
+          <groupId>net.sf.jxls</groupId>
+          <artifactId>jxls</artifactId>
+          <version>1.0.6</version>
+      </dependency>
   </dependencies>
 
   <build>
