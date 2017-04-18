@@ -29,7 +29,7 @@ public class UserService {
             session.closeSession();        //注意关掉session，其他的Connection等会自动被关闭。
         }
 
-        DbSqlBuilder sqlBuilder  = DbSqlBuilder.sql()._();
+        //DbSqlBuilder sqlBuilder  = DbSqlBuilder.sql()._();
 
 
     }

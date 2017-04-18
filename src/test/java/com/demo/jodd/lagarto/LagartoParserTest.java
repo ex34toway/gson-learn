@@ -1,7 +1,8 @@
 package com.demo.jodd.lagarto;
 
-import jodd.lagarto.LagartoParser;
-import jodd.lagarto.TagVisitor;
+import static jodd.jerry.Jerry.jerry;
+
+import jodd.jerry.Jerry;
 import org.junit.Test;
 
 /**
@@ -13,5 +14,13 @@ public class LagartoParserTest {
     public void testBase()
     {
 
+    }
+
+    @Test
+    public void testBaseJerry(){
+        Jerry doc = jerry("<p>啊啊实打实大苏打似的<br></p> <p><br></p>");
+        System.out.println(doc.text());
+        doc = jerry("<span>other</span>");
+        System.out.println(doc.text());
     }
 }

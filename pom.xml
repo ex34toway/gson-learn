@@ -74,11 +74,6 @@
           <version>2.4.2</version>
       </dependency>
       <dependency>
-          <groupId>org.jodd</groupId>
-          <artifactId>jodd-db</artifactId>
-          <version>3.8.0</version>
-      </dependency>
-      <dependency>
           <groupId>org.jxls</groupId>
           <artifactId>jxls-reader</artifactId>
           <version>2.0.2</version>
@@ -110,7 +105,12 @@
       </dependency>
       <dependency>
           <groupId>org.jodd</groupId>
-          <artifactId>jodd-lagarto</artifactId>
+          <artifactId>jodd-all</artifactId>
+          <version>3.8.5</version>
+      </dependency>
+      <dependency>
+          <groupId>org.jodd</groupId>
+          <artifactId>jodd-joy</artifactId>
           <version>3.8.5</version>
       </dependency>
   </dependencies>
