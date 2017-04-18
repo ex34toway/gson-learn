@@ -14,6 +14,9 @@
     <logger name="com.arch.netty" level="debug">
         <appender-ref ref="STDOUT"/>
     </logger>
+    <logger name="org.jxls.demo" level="debug">
+        <appender-ref ref="STDOUT"/>
+    </logger>
 </configuration>
 
 

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<workbook>
+    <worksheet name="Sheet1">
+        <section startRow="0" endRow="1"/>
+        <loop startRow="1" endRow="5" items="fileList" var="file" varType="com.demo.jxls.poi.reader.FileInfo">
+            <section startRow="2" endRow="5">
+                <mapping row="1" col="0">file.name</mapping>
+                <mapping row="1" col="1">file.size</mapping>
+            </section>
+            <loopbreakcondition>
+                <rowcheck offset="0">
+                    <cellcheck offset="0">OverInput</cellcheck>
+                </rowcheck>
+            </loopbreakcondition>
+        </loop>
+    </worksheet>
+</workbook>
