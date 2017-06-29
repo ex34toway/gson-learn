@@ -113,6 +113,11 @@
           <artifactId>jodd-joy</artifactId>
           <version>3.8.5</version>
       </dependency>
+      <dependency>
+          <groupId>com.googlecode.ez-vcard</groupId>
+          <artifactId>ez-vcard</artifactId>
+          <version>0.10.2</version>
+      </dependency>
   </dependencies>
 
   <build>
